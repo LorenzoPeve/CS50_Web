@@ -1,0 +1,23 @@
+
+#search-form {
+    border-radius: 30px 30px 30px 30px;
+    width:50%;
+}
+
+
+#search-button {
+    background-color: transparent;
+    border: none;
+    color: #888888;
+}
+
+.no-pointer {
+    cursor: default !important;
+    pointer-events: none;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center; /* Center-align items horizontally */
+    margin-top: 10px;
+}
