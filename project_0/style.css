@@ -2,6 +2,9 @@
 #search-form {
     border-radius: 30px 30px 30px 30px;
     width:50%;
+    box-shadow: none;
+    outline:  #888888;
+    border: 1px solid #ccc;
 }
 
 
