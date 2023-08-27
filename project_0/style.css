@@ -24,3 +24,20 @@
     justify-content: center; /* Center-align items horizontally */
     margin-top: 10px;
 }
+
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.input-label {
+    flex: 0 0 200px; /* Adjust the width of the labels */
+    padding-right: 15px;
+}
+
+
+#any_words {
+    width:30%;
+    
+}
