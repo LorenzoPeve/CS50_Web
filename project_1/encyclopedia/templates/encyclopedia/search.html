@@ -1,0 +1,21 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Wiki - Search
+{% endblock %}
+
+{% block body %}
+    <h1>Search Results</h1>
+    <p>You were looking for <b>{{ entry }}</b> but it doesn't exist!</p><br?    
+
+    {% if entries|length == 0 %}
+        <p><b>No close matches found</b></p>
+    {% else %}
+        <h3>Instead, look at the closest matches:</h3>
+        <ul>
+            {% for entry in entries %}
+                <li> <a href="{% url 'entry' entry %}">{{ entry }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %} 
+{% endblock %}

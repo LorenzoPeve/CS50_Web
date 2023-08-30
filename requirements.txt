@@ -1,2 +1,2 @@
-markdown2-2.4.10
 Django==4.2.4
+markdown2-2.4.10
