@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.urls import reverse
 from markdown2 import Markdown
+import os
 import random
 
 markdowner = Markdown()
@@ -56,4 +57,22 @@ def newpage(request):
     Redirects the search query to the wiki page if it exists or renders a page
     with "close" matches.
     """
-    return render(request, "encyclopedia/create.html")
+    if request.method == 'GET':
+        return render(request, "encyclopedia/create.html")
+    elif request.method == 'POST':
+        entries = util.list_entries()
+        post_data = request.POST
+        title = post_data.get('title')
+        content = post_data.get('content')
+
+        if title in entries:
+            return render(request, "encyclopedia/406.html", {'entry': title})
+        else:          
+            fname = title + '.md'
+            fpath = os.path.abspath(os.path.join(
+                os.path.dirname(__file__), '..', 'entries', fname))
+            with open(fpath, 'w') as file:
+                file.write(content)
+
+            url = reverse('entry', args=[title])
+            return redirect(url)
