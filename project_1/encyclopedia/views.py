@@ -46,8 +46,14 @@ def query(request):
             'entry': q, 'entries': entries
         })
 
-
 def random_page(request):
     """Displays a random encyclopedia entry."""
     entry = random.choice(util.list_entries())
     return display_entry(request, entry)
+
+def newpage(request):
+    """
+    Redirects the search query to the wiki page if it exists or renders a page
+    with "close" matches.
+    """
+    return render(request, "encyclopedia/create.html")
