@@ -76,3 +76,24 @@ def newpage(request):
 
             url = reverse('entry', args=[title])
             return redirect(url)
+        
+
+def editpage(request, entry):
+
+    if request.method == 'GET':
+        content = util.get_entry(entry)
+        return render(request, "encyclopedia/editpage.html", {
+                'title': entry, 'content': content
+            })
+    elif request.method == 'POST':
+        post_data = request.POST
+        content = post_data.get('content')
+
+        fname = entry + '.md'
+        fpath = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), '..', 'entries', fname))
+        with open(fpath, 'w') as file:
+            file.write(content)
+
+        url = reverse('entry', args=[entry])
+        return redirect(url)
