@@ -10,7 +10,7 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="sidebar col-lg-2 col-md-3 bg-light">
+            <div class="sidebar col-lg-3 col-md-4 bg-light">
                 <h2 class="mt-3">Wiki</h2>
                 <form method="post" action="{% url 'query' %}" class="mt-3">
                     {% csrf_token %}
@@ -35,7 +35,7 @@
                 {% block nav %}
                 {% endblock %}
             </div>
-            <div class="main col-lg-10 col-md-9 bg-light">
+            <div class="main col-lg-9 col-md-8 bg-light">
                 {% block body %}
                 {% endblock %}
             </div>
