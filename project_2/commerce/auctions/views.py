@@ -1,15 +1,25 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import User
+from .models import User, Listing
+from .models import CATEGORIES
 
 
 def index(request):
-    return render(request, "auctions/index.html")
 
+    if request.user.is_authenticated:
+        listings = Listing.objects.all()
+        return render(
+            request, "auctions/index.html", {'listings': listings})
+    else:
+        # TODO
+        return render(request, "auctions/login.html", {
+                "message": "Invalid username and/or password."
+            })
 
 def login_view(request):
     if request.method == "POST":
@@ -61,3 +71,25 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+    
+@login_required()
+def create_listing(request):
+
+    if request.method == "POST":
+
+        kwargs = dict(
+            title=request.POST["title"],
+            description=request.POST["content"],
+            current_bid=request.POST.get("starting_bid"),
+            category=request.POST["category"],
+        )
+        url = request.POST.get("image_url")
+        if len(url) > 0:
+            kwargs['image_url'] = url
+
+        new_listing = Listing(**kwargs)
+        new_listing.save()
+        return redirect('index')
+    else:
+        return render(request, "auctions/create.html", {
+            'categories': CATEGORIES})
