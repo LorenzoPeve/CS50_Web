@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import User, Listing
+from .models import User, Listing, Watchlist
 from .models import CATEGORIES
 
 
@@ -16,11 +16,10 @@ def index(request):
         return render(
             request, "auctions/index.html", {'listings': listings})
     else:
-        # TODO
         return render(request, "auctions/login.html", {
-                "message": "Invalid username and/or password."
+                "message": "Must sign in to see listings"
             })
-
+    
 def login_view(request):
     if request.method == "POST":
 
@@ -93,3 +92,30 @@ def create_listing(request):
     else:
         return render(request, "auctions/create.html", {
             'categories': CATEGORIES})
+    
+@login_required()
+def shop_by_category(request, category: str=None):
+
+    if category is None:
+        return render(request, "auctions/category.html", {
+            'categories': CATEGORIES})
+
+    elif category == 'all':
+        listings = Listing.objects.all()
+        return render(
+            request, "auctions/index.html", {'listings': listings})
+
+    else:
+        listings = Listing.objects.filter(category=category)
+        return render(
+            request, "auctions/index.html", {
+                'listings': listings, 'category': category})
+      
+@login_required()
+def add_to_watchlist(request):
+
+    user = User.objects.get(username=request.user.username)
+    listing = Listing.objects.get(id=request.POST["listing_id"])
+    w = Watchlist(user=user, listing=listing)
+    w.save()
+    return shop_by_category(request, request.POST["category"])
