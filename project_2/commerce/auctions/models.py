@@ -23,22 +23,8 @@ class Listing(models.Model):
 
 
 class Watchlist(models.Model):
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
 
-
-
-
-
-# class Bid(models.Model):
-#     pass
-
-# class Comment(models.Model):
-#     pass
-
-
-# class MyModel(models.Model):
-#     my_charfield = models.CharField(max_length=32, blank=False)
-
-# MyModel().save()
+    class Meta:
+        unique_together = ('user', 'listing')

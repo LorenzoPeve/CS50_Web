@@ -100,7 +100,7 @@ def shop_by_category(request, category: str=None):
         return render(request, "auctions/category.html", {
             'categories': CATEGORIES})
 
-    elif category == 'all':
+    elif category == 'all' or len(category) == 0:
         listings = Listing.objects.all()
         return render(
             request, "auctions/index.html", {'listings': listings})
@@ -116,6 +116,20 @@ def add_to_watchlist(request):
 
     user = User.objects.get(username=request.user.username)
     listing = Listing.objects.get(id=request.POST["listing_id"])
+    
     w = Watchlist(user=user, listing=listing)
-    w.save()
+
+    try:
+        w.save()
+    except IntegrityError as e:
+        assert e.args[0].startswith('UNIQUE constraint failed')
+
     return shop_by_category(request, request.POST["category"])
+
+@login_required()
+def display_watchlist(request):
+
+    specific_user = User.objects.get(username=request.user.username)
+    watchlist_items = Watchlist.objects.filter(user=specific_user)
+    listings = [item.listing for item in watchlist_items]
+    return render(request, "auctions/mywatchlist.html", {'listings': listings})
