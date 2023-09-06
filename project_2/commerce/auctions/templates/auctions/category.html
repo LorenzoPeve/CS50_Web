@@ -1,0 +1,23 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    Shop by Category
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="text-center">Shop by Category</h1>
+    <div class="row mt-4">
+        {% for category in categories %}
+            <div class="col-md-4 mb-3">
+                <a href="{% url 'shopcategory' category %}" class="btn btn-primary btn-block">{{category}}</a>
+            </div>
+        {% endfor %}
+        <div class="col-md-12 mb-3">
+            <a href="{% url 'shopcategory' 'all'%}" class="btn btn-success btn-block">Shop all</a>
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}
