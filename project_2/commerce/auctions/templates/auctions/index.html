@@ -2,8 +2,18 @@
 
 {% block body %}
 <div class="container">
-    <h1>E-Commerce Listings</h1>
-    <div class="card-deck">
+    {% if category %}
+        <h1>CS50 - {{category}}</h1>
+    {% else %}
+        <h1>CS50 - All Listings</h1>
+    {% endif %}
+    <div class="card-deck mt-5">
+
+        {% if listings|length == 0 %}
+        <div class="alert alert-warning" role="alert">
+            <h4>No listings available for the selected category</h4>
+        </div>
+        {% else %}
         {% for listing in listings %}
             <div class="col-12 col-md-6 col-lg-4 mb-4">
                 <div class="card h-100">
@@ -12,12 +22,21 @@
                         <h5 class="card-title">{{ listing.title }}</h5>
                         <p class="card-text">{{ listing.description }}</p>
                         <p class="card-text">Current Bid: ${{ listing.current_bid }}</p>
+
+                        <form method="post" action="{% url 'watchlist' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                            <input type="hidden" name="category" value="{{category}}">
+                            <button id="watchlistButton" type="submit" class="btn btn-primary">Add to Watchlist</button>
+                        </form>
                     </div>
                 </div>
             </div>
         {% endfor %}
+        {% endif %}
     </div>
 </div>
+
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
