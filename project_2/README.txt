@@ -3,11 +3,5 @@ python manage.py migrate auctions
 
 When you delete
 
-python manage.py migrate auctions
 python manage.py migrate
 python manage.py createsuperuser
-
-
-
-
-# Add not available image
