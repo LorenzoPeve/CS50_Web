@@ -10,8 +10,14 @@
     <div class="card-deck mt-5">
 
         {% if listings|length == 0 %}
+
         <div class="alert alert-warning" role="alert">
+            {% if category %}
             <h4>No listings available for the selected category</h4>
+            {% else %}
+            <h4>No listings in database</h4>
+            {% endif %}
+
         </div>
         {% else %}
         {% for listing in listings %}
@@ -22,13 +28,16 @@
                         <h5 class="card-title">{{ listing.title }}</h5>
                         <p class="card-text">{{ listing.description }}</p>
                         <p class="card-text">Current Bid: ${{ listing.current_bid }}</p>
-
-                        <form method="post" action="{% url 'watchlist' %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="listing_id" value="{{ listing.id }}">
-                            <input type="hidden" name="category" value="{{category}}">
-                            <button id="watchlistButton" type="submit" class="btn btn-primary">Add to Watchlist</button>
-                        </form>
+                        <div class="row">
+                            <form method="post" action="{% url 'watchlist' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                                <button id="watchlistButton" type="submit" class="btn btn-primary mx-2">Add to Watchlist</button>
+                            </form>
+                            <form method="get" action="{% url 'showlisting'  listing.id %}">                            
+                                <button id="watchlistButton" type="submit" class="btn btn-primary mx-3">Go to Listing</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

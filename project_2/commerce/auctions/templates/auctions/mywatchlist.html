@@ -6,13 +6,13 @@
 
 {% block body %}
 <div class="container">
-    <h1>CS50 - Saved Listings</h1>
+    <h1>CS50 - My WatchList</h1>
 
     <div class="card-deck mt-5">
 
         {% if listings|length == 0 %}
         <div class="alert alert-warning" role="alert">
-            <h4>No listings added to <b>your listing</b></h4>
+            <h4>No listings added to <b>your WatchList</b></h4>
         </div>
         {% else %}
         {% for listing in listings %}
@@ -23,6 +23,11 @@
                         <h5 class="card-title">{{ listing.title }}</h5>
                         <p class="card-text">{{ listing.description }}</p>
                         <p class="card-text">Current Bid: ${{ listing.current_bid }}</p>
+                    </div>                    
+                    <div class="card-footer text-center">
+                        <form method="get" action="{% url 'showlisting'  listing.id %}">
+                            <button id="watchlistButton" type="submit" class="btn btn-primary mx-3">Go to Listing</button>
+                        </form>
                     </div>
                 </div>
             </div>

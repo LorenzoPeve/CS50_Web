@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -5,7 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import User, Listing, Watchlist
+from .models import User, Listing, Watchlist, Comment
 from .models import CATEGORIES
 
 
@@ -77,6 +78,7 @@ def create_listing(request):
     if request.method == "POST":
 
         kwargs = dict(
+            owner=User.objects.get(username=request.user.username),
             title=request.POST["title"],
             description=request.POST["content"],
             current_bid=request.POST.get("starting_bid"),
@@ -118,13 +120,22 @@ def add_to_watchlist(request):
     listing = Listing.objects.get(id=request.POST["listing_id"])
     
     w = Watchlist(user=user, listing=listing)
-
     try:
         w.save()
     except IntegrityError as e:
         assert e.args[0].startswith('UNIQUE constraint failed')
 
-    return shop_by_category(request, request.POST["category"])
+    return display_watchlist(request)
+
+@login_required()
+def remove_from_watchlist(request):
+
+    user = User.objects.get(username=request.user.username)
+    listing = Listing.objects.get(id=request.POST["listing_id"])    
+    w = Watchlist.objects.filter(user=user, listing=listing)
+    w.delete()
+    return display_watchlist(request)
+
 
 @login_required()
 def display_watchlist(request):
@@ -133,3 +144,68 @@ def display_watchlist(request):
     watchlist_items = Watchlist.objects.filter(user=specific_user)
     listings = [item.listing for item in watchlist_items]
     return render(request, "auctions/mywatchlist.html", {'listings': listings})
+
+
+def _is_listing_in_users_watchlist(listing_id: int, user: User) -> bool:
+    """Returns True is listing is already in User's watchlist"""
+
+    ls = Listing.objects.get(id=listing_id)
+    w = Watchlist.objects.filter(user=user, listing=ls)
+    if len(w) == 0:
+        return False
+    return True
+
+def _does_user_owns_listing(l: Listing, user: User) -> bool:
+    """Returns True is listing is already in User's watchlist"""
+
+    if l.owner.username == user.username:
+        return True
+    return False
+
+@login_required()
+def display_listing(request, listing_id: int):
+
+    specific_user = User.objects.get(username=request.user.username)
+    listing = Listing.objects.get(id=listing_id)
+
+    is_in_watchlist = _is_listing_in_users_watchlist(listing_id, specific_user)
+    is_user_owner = _does_user_owns_listing(listing, specific_user)
+    comments = Comment.objects.filter(listing=listing).order_by('date')
+
+    return render(request, "auctions/listing.html", {
+            'listing': listing,
+            'is_in_users_watchlist': is_in_watchlist,
+            'is_user_owner': is_user_owner,
+            'comments': comments
+    }
+    )
+
+@login_required()
+def add_comment(request):
+
+    specific_user = User.objects.get(username=request.user.username)
+    listing = Listing.objects.get(id=request.POST["listing_id"])
+    c = Comment(
+        listing=listing,
+        author=specific_user,
+        date=datetime.now(),
+        comment=request.POST["comment"]
+    )
+    c.save()
+    
+    return display_listing(request, request.POST["listing_id"])
+
+@login_required()
+def place_bid(request):
+
+    specific_user = User.objects.get(username=request.user.username)
+    listing = Listing.objects.get(id=request.POST["listing_id"])
+    c = Comment(
+        listing=listing,
+        author=specific_user,
+        date=datetime.now(),
+        comment=request.POST["comment"]
+    )
+    c.save()
+    
+    return display_listing(request, request.POST["listing_id"])
