@@ -6,14 +6,14 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import User, Listing, Watchlist, Comment
+from .models import User, Listing, Watchlist, Comment, Bid
 from .models import CATEGORIES
 
 
 def index(request):
 
     if request.user.is_authenticated:
-        listings = Listing.objects.all()
+        listings = Listing.objects.filter(status='active')
         return render(
             request, "auctions/index.html", {'listings': listings})
     else:
@@ -163,7 +163,7 @@ def _does_user_owns_listing(l: Listing, user: User) -> bool:
     return False
 
 @login_required()
-def display_listing(request, listing_id: int):
+def display_listing(request, listing_id: int, **kwargs):
 
     specific_user = User.objects.get(username=request.user.username)
     listing = Listing.objects.get(id=listing_id)
@@ -172,13 +172,22 @@ def display_listing(request, listing_id: int):
     is_user_owner = _does_user_owns_listing(listing, specific_user)
     comments = Comment.objects.filter(listing=listing).order_by('date')
 
-    return render(request, "auctions/listing.html", {
-            'listing': listing,
-            'is_in_users_watchlist': is_in_watchlist,
-            'is_user_owner': is_user_owner,
-            'comments': comments
+    winning_bid = Bid.objects.filter(listing=listing).order_by('-price')
+    if len(winning_bid) == 0:
+        winning_bid = None
+    else:
+        winning_bid = winning_bid[0]
+        
+    context = {
+        'listing': listing,
+        'is_in_users_watchlist': is_in_watchlist,
+        'is_user_owner': is_user_owner,
+        'comments': comments,
+        'winning_bid': winning_bid
     }
-    )
+
+    context.update(**kwargs)
+    return render(request, "auctions/listing.html", context)
 
 @login_required()
 def add_comment(request):
@@ -198,14 +207,29 @@ def add_comment(request):
 @login_required()
 def place_bid(request):
 
-    specific_user = User.objects.get(username=request.user.username)
     listing = Listing.objects.get(id=request.POST["listing_id"])
-    c = Comment(
-        listing=listing,
-        author=specific_user,
-        date=datetime.now(),
-        comment=request.POST["comment"]
-    )
-    c.save()
-    
-    return display_listing(request, request.POST["listing_id"])
+    new_bid = float(request.POST["bid_amount"])
+
+    if new_bid <= listing.current_bid:
+        return display_listing(
+            request, request.POST["listing_id"], bid_error=True)
+    else:
+        b = Bid(
+            user=User.objects.get(username=request.user.username),
+            listing=listing,
+            price=new_bid,
+            date=datetime.now(),
+        )
+        b.save()
+        return display_listing(
+            request, request.POST["listing_id"], bid_error=False)
+
+@login_required()
+def close_bid(request):
+
+    listing = Listing.objects.get(id=request.POST["listing_id"])
+    listing.status = 'closed'
+    listing.save()
+    return display_listing(
+        request, request.POST["listing_id"])
+

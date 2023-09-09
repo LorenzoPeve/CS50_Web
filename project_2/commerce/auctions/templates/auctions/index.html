@@ -28,14 +28,14 @@
                         <h5 class="card-title">{{ listing.title }}</h5>
                         <p class="card-text">{{ listing.description }}</p>
                         <p class="card-text">Current Bid: ${{ listing.current_bid }}</p>
-                        <div class="row">
+                        <div class="row text-center">
                             <form method="post" action="{% url 'watchlist' %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="listing_id" value="{{ listing.id }}">
-                                <button id="watchlistButton" type="submit" class="btn btn-primary mx-2">Add to Watchlist</button>
+                                <button id="watchlistButton" type="submit" class="btn btn-primary mt-2 mx-2">Add to Watchlist</button>
                             </form>
                             <form method="get" action="{% url 'showlisting'  listing.id %}">                            
-                                <button id="watchlistButton" type="submit" class="btn btn-primary mx-3">Go to Listing</button>
+                                <button id="watchlistButton" type="submit" class="btn btn-primary mt-2 mx-2">Go to Listing</button>
                             </form>
                         </div>
                     </div>

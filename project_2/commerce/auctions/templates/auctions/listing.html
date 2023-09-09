@@ -9,11 +9,15 @@
     <div class="row align-items-center">
         <div class="col-6 mx-auto">
             <div class="card shadow border">
+            {% if listing.status == 'closed' %}
+            <div class="card-header bg-danger text-white">Closed</div>
+            {% endif %}  
                 <img src="{{ listing.image_url }}" class="card-img-top img-fit mx-auto" style="max-width: 400px; aspect-ratio: 16 / 9; object-fit: cover;" alt="{{ listing.title }}">
                 <div class="card-body d-flex flex-column align-items-center">
                     <h5 class="card-title">{{ listing.title }}</h5>
                     <p class="card-text">{{ listing.description }}</p>
                     <p class="card-text">Current Bid: ${{ listing.current_bid }}</p>
+
 
                     <!-- Adding/Removing from Watchlist -->
                     {% if is_in_users_watchlist %}
@@ -29,7 +33,10 @@
                         <input type="hidden" name="listing_id" value="{{ listing.id }}">
                         <button id="watchlistButton" type="submit" class="btn btn-success mb-2">Add to Watchlist</button>
                     </form>
-                    {% endif %}       
+                    {% endif %}                           
+                </div>
+                <div class="card-footer text-muted">
+                    Posted by: {{ listing.owner.username }} on {{listing.date}}
                 </div>
             </div>
         </div>
@@ -37,28 +44,72 @@
 </div>
 
 <!-- Bidding if non-owner/Closing bid if owener -->
-{% if not  is_user_owner %}
+{% if not is_user_owner and listing.status == 'active'%}
 <div class="container">
     <div class="row align-items-center">
         <div class="col-6 mx-auto mt-3">
             <div class="card shadow border">
                 <div class="card-body">
-                    <h5 class="card-title">Place a Bid</h5>
-                    <p class="card-text">Current Bid: ${{ listing.current_bid }}</p>
+                    <h5 class="card-title">Place a Bid</h5>                    
                     <form method="post" action="{% url 'placebid' %}">
                         {% csrf_token %}
+                        <input type="hidden" name="listing_id" value="{{ listing.id }}">
                         <div class="form-group">
                             <label for="bid_amount">Bid Amount:</label>
-                            <input type="number" class="form-control" id="bid_amount" name="bid_amount" min="{{ listing.current_bid|add:1 }}" required>
+                            <input type="number" class="form-control" id="bid_amount" name="bid_amount" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Place Bid</button>
                     </form>
+
+                    {% if bid_error is True %}
+                    <div class="alert alert-danger" role="alert">
+                        Bid must be greater than current bid.
+                    </div>
+                    {% endif %}
+                    {% if bid_error is False %}
+                    <div class="alert alert-success" role="alert">
+                        Bid placed!
+                    </div>
+                    {% endif %}   
                 </div>
             </div> 
         </div>
     </div>
 </div>   
 {% endif %}    
+
+<!-- Displaying Highest bid -->
+{% if winning_bid and listing.status == 'active'%}
+<div class="container">
+    <div class="row align-items-center">
+        <div class="col-6 mx-auto mt-3">
+            <div class="card shadow border">
+                <div class="card-body">
+                    <h5 class="card-title">Highest Bid</h5>                    
+                    <p>{{winning_bid.user.username}} @ ${{winning_bid.price}}</p>
+                    {% if is_user_owner and listing.status == 'active' %}
+                    <form method="post" action="{% url 'closebid' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                        <button type="submit" class="btn btn-danger">Close Bid</button>
+                    </form>
+                    {% endif %}   
+                </div>
+            </div> 
+        </div>
+    </div>
+</div>  
+{% endif %} 
+<div class="mt-5"></div>
+
+
+<!-- Show Winning Bid If bid exists, listing is closed, and the owner of the bid is logged in-->
+{% if winning_bid and listing.status == 'closed' and winning_bid.user.username == user.username%}
+<div class="alert alert-success col-3 mx-auto text-center" role="alert">
+    <h3><b>You won this AUCTION!</b></h3>
+</div>
+{% endif %} 
+
 
 
 <!-- Show Comments -->
@@ -95,5 +146,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
