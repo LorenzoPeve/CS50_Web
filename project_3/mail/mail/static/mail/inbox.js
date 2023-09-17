@@ -29,8 +29,9 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
-  
-  display_emails(mailbox)
+  document.querySelector('#single-email-view').style.display = 'none';
+
+  display_emails(mailbox);
 }
 
 function send_email() {
@@ -92,7 +93,9 @@ function display_emails(mailbox) {
 
       // Create card for email
       const emailCard = document.createElement("div");
+      emailCard.addEventListener('click', () => load_email(email.id))
       emailCard.className = "card w-75 shadow-0 border rounded-3 mb-3";
+      emailCard.style.cursor = 'pointer';
 
       // Card header with sender and timestamp
       const cardHeader = document.createElement("div");
@@ -131,4 +134,44 @@ function get_emails_from_mailbox(mailbox) {
     .then(response => response.json());
 
   return emails
+}
+
+
+function load_email(email_id) {
+  
+  // Show the mailbox and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#single-email-view').style.display = 'block';
+
+  const container = document.getElementById("single-email-view");
+  container.style.border = "1px solid #ddd";
+  container.style.padding = "20px";
+  container.style.backgroundColor = "#b5bfc4";
+  container.style.borderRadius = "10px";
+  
+  fetch(`/emails/${email_id}`)
+    .then(response => response.json())
+    .then(email => {
+        
+      container.innerHTML = `
+      <p class="mb-0"><small><strong>From:</strong> ${email.sender}</small></p>
+      <p class="mb-0"><small><strong>To:</strong> ${email.recipients}</small></p>
+      <p class="mb-0"><small><strong>Subject:</strong> ${email.subject}</small></p>
+      <p class="mb-0"><small><strong>Datetime:</strong> ${email.timestamp}</small></p>
+      <br>
+      <p class="mb-0"><small>${email.body}</small></p>
+    `;
+     return email
+    })
+    .then( email => {
+
+      if (email.read != true) {
+        fetch(`/emails/${email_id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+              read: true
+        })})
+      }
+      });
 }
