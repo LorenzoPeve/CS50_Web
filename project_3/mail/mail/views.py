@@ -78,7 +78,7 @@ def mailbox(request, mailbox):
     # Filter emails returned based on mailbox
     if mailbox == "inbox":
         emails = Email.objects.filter(
-            user=request.user, recipients=request.user, archived=False
+            recipients=request.user, archived=False
         )
     elif mailbox == "sent":
         emails = Email.objects.filter(
@@ -86,7 +86,7 @@ def mailbox(request, mailbox):
         )
     elif mailbox == "archive":
         emails = Email.objects.filter(
-            user=request.user, recipients=request.user, archived=True
+            recipients=request.user, archived=True
         )
     else:
         return JsonResponse({"error": "Invalid mailbox."}, status=400)
@@ -134,7 +134,6 @@ def login_view(request):
         email = request.POST["email"]
         password = request.POST["password"]
         user = authenticate(request, username=email, password=password)
-
         # Check if authentication successful
         if user is not None:
             login(request, user)
@@ -168,6 +167,7 @@ def register(request):
         try:
             user = User.objects.create_user(email, email, password)
             user.save()
+            print(user.password)
         except IntegrityError as e:
             print(e)
             return render(request, "mail/register.html", {
