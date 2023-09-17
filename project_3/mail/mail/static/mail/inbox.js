@@ -70,6 +70,15 @@ function display_emails(mailbox) {
     const container = document.getElementById("emails-view");  
     container.innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
     
+    if (emails.length == 0) {
+      let mailbox_name = mailbox.charAt(0).toUpperCase() + mailbox.slice(1)
+      const no_emails_alert = document.createElement("div");
+      no_emails_alert.className = "alert alert-dark";
+      no_emails_alert.innerHTML = `No emails in <strong> ${mailbox_name}</strong>.`;
+      container.append(no_emails_alert);
+      return
+    }
+
     emails.forEach(email => {
 
       // Create card for email
@@ -99,7 +108,7 @@ function display_emails(mailbox) {
         cardBody.style.backgroundColor = "white"
       }
     
-      emailCard.append(cardHeader)
+      emailCard.append(cardHeader);
       emailCard.append(cardBody);
       container.append(emailCard);
     })
@@ -109,12 +118,8 @@ function display_emails(mailbox) {
 function get_emails_from_mailbox(mailbox) {
 
   const url = `/emails/${mailbox}`;
-  emails = fetch(url)
+  let emails = fetch(url)
     .then(response => response.json());
 
   return emails
 }
-
-
-
-
