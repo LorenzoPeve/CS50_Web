@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
-  document.getElementById('compose_email').addEventListener('click', send_email);
+  document.getElementById('send-email').addEventListener('click', send_email);
 
 
   // By default, load the inbox
@@ -173,5 +173,49 @@ function load_email(email_id) {
               read: true
         })})
       }
+      return email
+      })
+      .then(email => {  // Add Archive/Remove from archive buttons
+
+        // Only add button for received emails
+        let logged_in_user = document.querySelector('#logged-in-user').textContent;        
+        if (logged_in_user == email.sender) {return};
+       
+        const element = document.createElement('button');
+
+        if (email.archived == true) {          
+          element.innerHTML = 'Remove from Archive';
+          element.addEventListener('click', () => unarchive_email(email.id));
+        }
+        else {
+          element.innerHTML = 'Archive';
+          element.addEventListener('click', () => archive_email(email.id));
+        };
+
+        element.className = "btn btn-secondary btn-sm btn-muted mt-3";      
+        container.append(element);
       });
+}
+
+
+function archive_email (email_id) {
+
+  fetch(`/emails/${email_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: true
+  })
+  }).
+  then(() => load_mailbox('inbox'));
+}
+
+function unarchive_email (email_id) {
+
+  fetch(`/emails/${email_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: false
+  })
+  }).
+  then(() => load_mailbox('inbox'));
 }
