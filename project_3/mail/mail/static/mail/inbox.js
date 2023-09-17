@@ -70,6 +70,7 @@ function display_emails(mailbox) {
     const container = document.getElementById("emails-view");  
     container.innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
     
+    // Handle empty mailbox
     if (emails.length == 0) {
       let mailbox_name = mailbox.charAt(0).toUpperCase() + mailbox.slice(1)
       const no_emails_alert = document.createElement("div");
@@ -77,6 +78,14 @@ function display_emails(mailbox) {
       no_emails_alert.innerHTML = `No emails in <strong> ${mailbox_name}</strong>.`;
       container.append(no_emails_alert);
       return
+    }
+
+    // Distinguish TO/FROM
+    if (mailbox == 'inbox' || mailbox == 'archive') {
+      header_preffix = "From";
+    }
+    else {
+      header_preffix = "To";
     }
 
     emails.forEach(email => {
@@ -89,7 +98,7 @@ function display_emails(mailbox) {
       const cardHeader = document.createElement("div");
       cardHeader.className = "card-header mb-0 bg-secondary text-white d-flex justify-content-between";
       cardHeader.innerHTML = `
-        <p class="mb-0"><small><strong>From:</strong> ${email.sender}</small></p>
+        <p class="mb-0"><small><strong>${header_preffix}:</strong> ${email.sender}</small></p>
         <p class="mb-0"<small>${email.timestamp}</small></p>
       `;
 
@@ -102,10 +111,10 @@ function display_emails(mailbox) {
       `;
 
       // Read vs Unread messages
-      if (email.read) {
-        cardBody.style.backgroundColor = "#cacfcd"
+      if (email.read && mailbox != 'sent') {
+        cardBody.style.backgroundColor = "#cacfcd";
       } else {
-        cardBody.style.backgroundColor = "white"
+        cardBody.style.backgroundColor = "white";
       }
     
       emailCard.append(cardHeader);
