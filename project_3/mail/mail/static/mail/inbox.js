@@ -16,6 +16,7 @@ function compose_email() {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#single-email-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
@@ -178,7 +179,7 @@ function load_email(email_id) {
       .then(email => {  // Add Archive/Remove from archive buttons
 
         // Only add button for received emails
-        let logged_in_user = document.querySelector('#logged-in-user').textContent;        
+        let logged_in_user = document.querySelector('#logged-in-user').textContent;
         if (logged_in_user == email.sender) {return};
        
         const element = document.createElement('button');
@@ -192,8 +193,19 @@ function load_email(email_id) {
           element.addEventListener('click', () => archive_email(email.id));
         };
 
-        element.className = "btn btn-secondary btn-sm btn-muted mt-3";      
+        element.className = "btn btn-secondary btn-sm btn-muted mt-3";
         container.append(element);
+      
+        return email     
+      })
+      .then(email => {
+        let logged_in_user = document.querySelector('#logged-in-user').textContent;
+        if (logged_in_user == email.sender) {return};
+        const reply = document.createElement('button');
+        reply.innerHTML = 'Reply';
+        reply.className = "btn btn-secondary btn-sm btn-muted mt-3 mx-3";
+        reply.addEventListener('click', () => compose_reply_email(email));
+        container.append(reply);
       });
 }
 
@@ -218,4 +230,24 @@ function unarchive_email (email_id) {
   })
   }).
   then(() => load_mailbox('inbox'));
+}
+
+function compose_reply_email(email) {
+
+
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#single-email-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+
+  document.querySelector('#compose-recipients').value = email.sender;
+
+  let subject = email.subject
+  if (!subject.startsWith("Re: ")) {
+    subject = "Re: " + subject;
+  }
+
+  document.querySelector('#compose-subject').value = subject;
+  document.querySelector('#compose-body').value = `On: ${email.timestamp}\nFrom: ${email.sender}\n\n${email.body}`
+
 }
