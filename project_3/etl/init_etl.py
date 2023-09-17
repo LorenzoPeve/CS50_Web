@@ -51,7 +51,7 @@ email = Email.objects.create(**{
         "subject": "US Open Tickets",
         "body": "Hi, I have extra US Open tickets. Are you interested?",
         "timestamp": datetime(2023, 9, 1, 13, 14, 37, tzinfo=EST),
-        "read": False,
+        "read": True,
         "archived": False,
 })
 email.recipients.set([user1])
@@ -63,7 +63,7 @@ email = Email.objects.create(**{
         "subject": "Re: US Open Tickets",
         "body": "Yes, I'm interested. How much are you selling them for?",
         "timestamp": datetime(2023, 9, 1, 14, 13, 37, tzinfo=EST),
-        "read": False,
+        "read": True,
         "archived": False,
 })
 email.recipients.set([user2])
@@ -100,7 +100,7 @@ email = Email.objects.create(**{
         "subject": "Looking for a Car",
         "body": "Hi, I'm in the market for a new car. Do you have any recommendations or know of any good deals going on right now?Thanks!",
         "timestamp": datetime(2023, 6, 1, 14, 7, 7, tzinfo=EST),
-        "read": False,
+        "read": True,
         "archived": False,
 })
 
@@ -116,7 +116,7 @@ Are you looking for a specific make or model? Do you have a budget in mind, or
 any specific features you want in the car? Let me know, and I'll do my best to assist you.
 """,
         "timestamp": datetime(2023, 6, 1, 14, 7, 37, tzinfo=EST),
-        "read": False,
+        "read": True,
         "archived": False,
 })
 
@@ -132,7 +132,7 @@ fuel-efficient sedan. My budget is around $20,000. I'd prefer a car with low
 mileage if possible. Do you have any suggestions in that price range?
 """,
         "timestamp": datetime(2023, 6, 1, 14, 8, 7, tzinfo=EST),
-        "read": False,
+        "read": True,
         "archived": False,
 })
 
@@ -149,7 +149,7 @@ Honda Civic, or the Hyundai Elantra. These cars are known for their
 affordability, low maintenance costs, and excellent fuel efficiency.
 """,
         "timestamp": datetime(2023, 6, 1, 14, 9, 25, tzinfo=EST),
-        "read": False,
+        "read": True,
         "archived": False,
 })
 
