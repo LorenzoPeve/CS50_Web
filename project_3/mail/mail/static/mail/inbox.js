@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
+  document.getElementById('compose_email').addEventListener('click', send_email);
+
 
   // By default, load the inbox
   load_mailbox('inbox');
@@ -30,4 +32,34 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+}
+
+function send_email() {
+
+  // Get values from form
+  let recipients = document.getElementById('compose-recipients').value;
+  let subject = document.getElementById('compose-subject').value;
+  let body = document.getElementById('compose-body').value;
+
+  // POST request. Display alert in case of failed request
+  fetch('/emails', {
+    method: 'POST',
+    body: JSON.stringify({
+        recipients: recipients,
+        subject: subject,
+        body: body
+    })
+  })
+  .then(response => {    
+    
+    if (!response.ok) {
+      return response.text().then(text => { throw new Error(text) })
+    }
+    else {      
+      return response.json();
+    }
+  })
+  .catch(error => {
+    alert(error.message);
+  });
 }
