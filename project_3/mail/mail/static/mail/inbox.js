@@ -82,15 +82,17 @@ function display_emails(mailbox) {
       return
     }
 
-    // Distinguish TO/FROM
-    if (mailbox == 'inbox' || mailbox == 'archive') {
-      header_preffix = "From";
-    }
-    else {
-      header_preffix = "To";
-    }
-
     emails.forEach(email => {
+
+      // Distinguish TO/FROM
+      if (mailbox == 'inbox' || mailbox == 'archived') {
+        header_preffix = 'From';
+        person = email.sender;
+      }
+      else {
+        header_preffix = 'To';
+        person = email.recipients;
+      }
 
       // Create card for email
       const emailCard = document.createElement("div");
@@ -102,7 +104,7 @@ function display_emails(mailbox) {
       const cardHeader = document.createElement("div");
       cardHeader.className = "card-header mb-0 bg-secondary text-white d-flex justify-content-between";
       cardHeader.innerHTML = `
-        <p class="mb-0"><small><strong>${header_preffix}:</strong> ${email.sender}</small></p>
+        <p class="mb-0"><small><strong>${header_preffix}:</strong> ${person}</small></p>
         <p class="mb-0"<small>${email.timestamp}</small></p>
       `;
 
