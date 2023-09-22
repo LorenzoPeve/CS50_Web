@@ -1,0 +1,104 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="h5">@{{profile.username}}</div>
+                <div class="h7 text-muted">Fullname: {{profile.first_name}} {{profile.last_name}}</div>
+                <div class="h7 text-muted">Email: {{profile.email}}</div>
+            </div>
+            <ul class="list-group list-group-flush text-center">
+                <li class="list-group-item">
+                    <div class="h6 text-muted">Followers</div>
+                    <div class="h5">{{n_followers}}</div>
+                </li>
+                <li class="list-group-item">
+                    <div class="h6 text-muted">Following</div>
+                    <div class="h5">{{n_followings}}</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-3 col-sm-3 col-xs-3">&nbsp;</div>
+
+<!-- Follow/Unfollow button -->
+{% if user.is_authenticated %}
+    {% if user.username != profile.username %}
+    <div class="row justify-content-center">
+        <form action="{% url 'followers' %}" method="post">
+            {% csrf_token %}
+            {% if is_following %}
+            <button type="submit" class="btn btn-primary" name="follow_choice" value="unfollow">Unfollow</button>
+            {% else %}
+            <button type="submit" class="btn btn-primary" name="follow_choice" value="follow">Follow</button>
+            {% endif %}
+            <input type="hidden" name="profile_username" value="{{ profile.username }}">
+        </form>
+    </div>
+    {% endif %}
+{% endif %}
+
+<div class="col-md-3 col-sm-3 col-xs-3">&nbsp;</div>
+<div class="col-md-3 col-sm-3 col-xs-3">&nbsp;</div>
+
+<!-- User {psts} -->
+{% if posts|length == 0 %}
+<div class="row justify-content-center">
+    <div class="col-lg-3">
+        <div class="alert alert-warning text-center" role="alert">
+            <h4><strong>{{profile.username}}</strong> has not posted yet!</h4>
+        </div>
+    </div>
+</div>
+{% else %}
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            {% for post in posts %}
+            <div class="card mb-2">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="mr-2">
+                                <img class="rounded-circle" width="45" src="https://picsum.photos/50/50" alt="">
+                            </div>
+                            <div class="ml-2">
+                                <div class="h5 m-0">@{{post.user.username}} </div>
+                                <div class="h7 text-muted">{{post.user.first_name}} {{post.user.last_name}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-6">
+                            <div class="text-muted h7 mb-2"> <i class="fa fa-clock-o"></i>{{post.created_at}}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="rectangle float-right">
+                                <div class="row">
+                                    <p>144</p>
+                                    <a href="#" class="card-link mx-2"><i class="fa fa-gittip"></i>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16">
+                                            <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a9.84 9.84 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.163 3.163 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.82 4.82 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"/>
+                                        </svg>
+                                    </a>
+
+                                </div>
+
+                            </div>                        
+                        </div>
+                    </div>                
+                    <p class="card-text">
+                        {{post.content}}
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>    
+{% endif %}
+{% endblock %}

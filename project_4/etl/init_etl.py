@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
 import django
 import os
 import sys
@@ -12,33 +12,40 @@ sys.path.insert(0, project_root)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'project4.settings'
 django.setup()
 
-EST = timezone(timedelta(hours=-5)) # US Eastern Time UTC-5
 
-from network.models import User, Post
-
+from network.models import User, Post, Following
+from network.models import EST
 
 admin = User.objects.create_superuser('admin', 'admin@example.com', '123')
 user1 = User.objects.create_user(
-    username="user1@example.com",
+    first_name='Carlos',
+    last_name='Sainz',
+    username="SmoothOperator",
     email="user1@example.com",
     password="123")
 user1.save()
-
+  
 user2 = User.objects.create_user(
-    username="user2@example.com",
-    email="user2@example.com",
+    first_name='Conor',
+    last_name='Mcgregor',
+    username="TheNotoriousMMA",
+    email="cm@example.com",
     password="123")
 user2.save()
 
 user3 = User.objects.create_user(
-    username="user3@example.com",
-    email="user3@example.com",
+    first_name='Alex',
+    last_name='Pereira',
+    username="PoatanMMA",
+    email="ap@example.com",
     password="123")
 user3.save()
 
 user4 = User.objects.create_user(
-    username="user4@example.com",
-    email="user4@example.com",
+    first_name='Novak',
+    last_name='Djokovic',
+    username="NoleTennis",
+    email="nd@example.com",
     password="123")
 user4.save()
 
@@ -68,7 +75,7 @@ p3 = Post(
 Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam mollis
 tortor elit, tincidunt venenatis neque viverra scelerisque
 """,
-    created_at=datetime(2023, 9, 29, 2, 19, 26, tzinfo=EST),
+    created_at=datetime(2023, 9, 19, 2, 19, 26, tzinfo=EST),
 )
 p3.save()
 
@@ -97,7 +104,7 @@ p6 = Post(
     content="""
 Etiam condimentum nunc neque, id finibus magna dapibus sed.
 """,
-    created_at=datetime(2023, 9, 22, 21, 10, 3, tzinfo=EST),
+    created_at=datetime(2023, 9, 20, 21, 10, 3, tzinfo=EST),
 )
 p6.save()
 
@@ -122,7 +129,8 @@ p8.save()
 p9 = Post(
     user=user3,
     content="""
-"Excited for the US Open finals! Who's your favorite to win the championship?",
+Dianzi laggiu lascia storia eccolo riposi pel all. Consunta oh piramide no
+dovresti lucidita proseguo tremante.
 """,
     created_at=datetime(2023, 9, 6, 19, 26, 14, tzinfo=EST),
 )
@@ -131,9 +139,23 @@ p9.save()
 p10 = Post(
     user=user3,
     content="""
-"Excited for the US Open finals! Who's your favorite to win the championship?",
+I love espressos!!!
 """,
-    created_at=datetime(2023, 9, 26, 18, 0, 30, tzinfo=EST),
+    created_at=datetime(2023, 9, 17, 18, 0, 30, tzinfo=EST),
 )
 
 p10.save()
+
+
+# Create a follower relationship
+follower = Following(user=user1, follows=user2)
+follower.save()
+
+follower = Following(user=user1, follows=user3)
+follower.save()
+
+follower = Following(user=user1, follows=user4)
+follower.save()
+
+follower = Following(user=user2, follows=user4)
+follower.save()

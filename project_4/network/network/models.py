@@ -1,13 +1,25 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils import timezone
+
+
+from datetime import datetime, timezone, timedelta
+EST = timezone(timedelta(hours=-5)) # US Eastern Time UTC-5
 
 class User(AbstractUser):
     pass
 
-
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Author of the post
     content = models.TextField()
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(datetime.now(EST))
+    updated_at = models.DateTimeField(default=datetime.now(EST))
+
+class Following(models.Model):
+    user = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
+    follows = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.username} follows {self.follows.username}"
+    
+    class Meta:
+        unique_together = ['user', 'follows']
