@@ -2,12 +2,13 @@ from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+import json
 
-from .models import User, Post, Following
+from .models import User, Post, Following, Like
 from .models import EST
 
 def index(request):
@@ -137,3 +138,23 @@ def display_following(request):
 
     context = {'posts': posts}
     return render(request, "network/index.html", context)
+
+@csrf_exempt
+@login_required
+def like_unlike_post(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    data = json.loads(request.body)
+    post_id = data['post_id']
+    post = Post.objects.get(id=post_id)
+
+    l = Like.objects.filter(user=request.user, post=post)
+
+    if l.exists():
+        l[0].delete()
+        return JsonResponse('dislike', safe=False)
+    else:     
+        l = Like(user=request.user, post=post)
+        l.save()
+        return JsonResponse('like', safe=False)

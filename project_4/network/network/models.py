@@ -14,6 +14,9 @@ class Post(models.Model):
     created_at = models.DateTimeField(datetime.now(EST))
     updated_at = models.DateTimeField(default=datetime.now(EST))
 
+    def total_likes(self):
+        return Like.objects.filter(post=self).count()
+
 class Following(models.Model):
     user = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
     follows = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
@@ -23,3 +26,10 @@ class Following(models.Model):
     
     class Meta:
         unique_together = ['user', 'follows']
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)  # Author of the post
+
+    class Meta:
+        unique_together = ['user', 'post']
