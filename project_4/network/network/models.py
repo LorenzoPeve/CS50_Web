@@ -11,8 +11,8 @@ class User(AbstractUser):
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Author of the post
     content = models.TextField()
-    created_at = models.DateTimeField(datetime.now(EST))
-    updated_at = models.DateTimeField(default=datetime.now(EST))
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
 
     def total_likes(self):
         return Like.objects.filter(post=self).count()

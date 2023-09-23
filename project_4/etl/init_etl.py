@@ -59,6 +59,7 @@ elit et blandit ullamcorper, tellus est tincidunt sem, quis laoreet erat felis
 nec turpis. 
 """,
     created_at=datetime(2023, 9, 9, 1, 14, 15, tzinfo=EST),
+    updated_at=datetime(2023, 9, 9, 1, 14, 15, tzinfo=EST),
 )
 p1.save()
 
@@ -66,6 +67,7 @@ p2 = Post(
     user=user1,
     content="""Ut sed tellus sed lorem congue mollis.""",
     created_at=datetime(2023, 9, 12, 0, 28, 40, tzinfo=EST),
+    updated_at=datetime(2023, 9, 12, 0, 28, 40, tzinfo=EST),
 )
 p2.save()
 
@@ -76,6 +78,7 @@ Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam mollis
 tortor elit, tincidunt venenatis neque viverra scelerisque
 """,
     created_at=datetime(2023, 9, 19, 2, 19, 26, tzinfo=EST),
+    updated_at=datetime(2023, 9, 19, 2, 19, 26, tzinfo=EST),
 )
 p3.save()
 
@@ -86,6 +89,7 @@ Etiam tempor sem eget tortor fermentum blandit. Nullam neque risus, convallis
 a quam sit amet, hendrerit sollicitudin magna.
 """,
     created_at=datetime(2023, 9, 1, 14, 2, 50, tzinfo=EST),
+    updated_at=datetime(2023, 9, 1, 14, 2, 50, tzinfo=EST),
 )
 p4.save()
 
@@ -96,6 +100,7 @@ Mauris venenatis ipsum quis libero hendrerit, nec molestie enim consectetur.
 Suspendisse et risus eget dui pretium tincidunt.
 """,
     created_at=datetime(2023, 9, 7, 3, 13, 42, tzinfo=EST),
+    updated_at=datetime(2023, 9, 7, 3, 13, 42, tzinfo=EST),
 )
 p5.save()
 
@@ -105,6 +110,7 @@ p6 = Post(
 Etiam condimentum nunc neque, id finibus magna dapibus sed.
 """,
     created_at=datetime(2023, 9, 20, 21, 10, 3, tzinfo=EST),
+    updated_at=datetime(2023, 9, 20, 21, 10, 3, tzinfo=EST),
 )
 p6.save()
 
@@ -114,6 +120,7 @@ p7 = Post(
 Sed nec maximus urna
 """,
     created_at=datetime(2023, 9, 3, 16, 25, 50, tzinfo=EST),
+    updated_at=datetime(2023, 9, 3, 16, 25, 50, tzinfo=EST),
 )
 p7.save()
 
@@ -123,6 +130,7 @@ p8 = Post(
 Aenean sit amet tellus nec ex consectetur maximus.
 """,
     created_at=datetime(2023, 9, 9, 7, 20, 20, tzinfo=EST),
+    updated_at=datetime(2023, 9, 9, 7, 20, 20, tzinfo=EST),
 )
 p8.save()
 
@@ -133,6 +141,7 @@ Dianzi laggiu lascia storia eccolo riposi pel all. Consunta oh piramide no
 dovresti lucidita proseguo tremante.
 """,
     created_at=datetime(2023, 9, 6, 19, 26, 14, tzinfo=EST),
+    updated_at=datetime(2023, 9, 6, 19, 26, 14, tzinfo=EST),
 )
 p9.save()
 
@@ -142,6 +151,7 @@ p10 = Post(
 I love espressos!!!
 """,
     created_at=datetime(2023, 9, 17, 18, 0, 30, tzinfo=EST),
+    updated_at=datetime(2023, 9, 17, 18, 0, 30, tzinfo=EST),
 )
 
 p10.save()

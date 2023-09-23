@@ -55,7 +55,11 @@
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-6">
-                        <div class="text-muted h7 mb-2"> <i class="fa fa-clock-o"></i>{{post.created_at}}</div>
+                        {% if post.created_at == post.updated_at %}
+                        <div class="text-muted h7 mb-2"> <i class="fa fa-clock-o"></i>Posted on: {{post.created_at}}</div>
+                        {% else %}
+                        <div class="text-muted h7 mb-2"> <i class="fa fa-clock-o"></i>Edited on: {{post.updated_at}}</div>
+                        {% endif %}
                     </div>
                     <div class="col-6">
                         <div class="rectangle float-right">
@@ -67,7 +71,6 @@
                                     </svg>
                                 </a>
                             </div>
-
                         </div>                        
                     </div>
                 </div>                
@@ -75,6 +78,11 @@
                     {{post.content}}
                 </p>
             </div>
+            {% if user.username == post.user.username %}
+            <div class="card-footer">
+                <button data-postid="{{post.id}}" type="submit" class="editpost btn btn-primary">Edit</button>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -72,10 +72,12 @@ def create_post(request):
 
     if request.method == "POST":
 
+        current_ts = datetime.now(EST)
         kwargs = dict(
             user=User.objects.get(username=request.user.username),
             content=request.POST["content"],
-            created_at=datetime.now(EST)
+            created_at=current_ts,
+            updated_at=current_ts,
         )
 
         new_post = Post(**kwargs)
@@ -158,3 +160,26 @@ def like_unlike_post(request):
         l = Like(user=request.user, post=post)
         l.save()
         return JsonResponse('like', safe=False)
+
+@csrf_exempt
+@login_required
+def update_post(request):
+    
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    data = json.loads(request.body)
+    post_id = data['post_id']
+    new_content = data['content']
+
+    # Update post
+    try:
+        post = Post.objects.get(id=post_id)
+        post.content = new_content
+        post.updated_at = datetime.now(EST)
+        post.save()
+        return JsonResponse('Post was updated', safe=False)
+    except Exception:
+        return JsonResponse("Post couldn't be updated", status=400)
+
+
