@@ -7,13 +7,18 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.core.paginator import Paginator
 
 from .models import User, Post, Following, Like
 from .models import EST
 
 def index(request):
+    
     posts = Post.objects.all().order_by('-created_at')
-    context = {'posts': posts}
+    p = Paginator(posts, 10)
+    page = request.GET.get('page')
+    paginated_posts = p.get_page(page)
+    context = {'paginated_posts': paginated_posts}
     return render(request, "network/index.html", context)
 
 
@@ -89,10 +94,12 @@ def display_profile(request, username: str):
 
     profile = User.objects.get(username=username)
     posts = Post.objects.filter(user=profile).order_by('-created_at')
-
+    p = Paginator(posts, 10)
+    page = request.GET.get('page')
+    paginated_posts = p.get_page(page)
     context = {
         'profile': profile,
-        'posts': posts,
+        'paginated_posts': paginated_posts,
         'n_followers': len(profile.followers.all()),
         'n_followings': len(profile.following.all())
     }
@@ -137,8 +144,10 @@ def display_following(request):
         following = [f.follows for f in following]
         posts = Post.objects.filter(user__in=following).order_by('-created_at')
 
-
-    context = {'posts': posts}
+    p = Paginator(posts, 10)
+    page = request.GET.get('page')
+    paginated_posts = p.get_page(page)
+    context = {'paginated_posts': paginated_posts}
     return render(request, "network/index.html", context)
 
 @csrf_exempt
